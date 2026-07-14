@@ -1,0 +1,46 @@
+# config.yaml — single source of truth for the CPS pipeline.
+# Referenced by extract.py / to_parquet.py / analyze.sql so variable names
+# and code meanings live in ONE place, not scattered across scripts.
+
+collection: cps
+
+# March ASEC samples only (income-capable). Add more years here to get a
+# trend line instead of a before/after. Each ID is one yearly file.
+samples:
+  - cps2019_03s   # pre-COVID baseline
+  - cps2024_03s   # post-AI-hype
+  # - cps2015_03s
+  # - cps2025_03s
+
+# Every variable in the extract. ASECWT is mandatory: it is the person weight.
+variables:
+  - AGE
+  - SEX
+  - EDUC
+  - EMPSTAT
+  - LABFORCE
+  - OCC
+  - IND
+  - INCWAGE
+  - UHRSWORKT   # usual hours/week, all jobs (CPS name has trailing T)
+  - ASECWT      # person weight — REQUIRED for every rate
+
+# Analysis parameters.
+young_age: [22, 27]      # the "bottom rung"
+compare_age: [35, 50]    # established workers, for the wage-gap question
+weight: ASECWT
+
+# Code meanings, straight from the DDI codebook (cps_0000N.xml).
+# Confirmed against the real data on 2026-07-14.
+codes:
+  EMPSTAT:            # employment status
+    employed: [10, 12]        # at work / has job, not at work
+    unemployed: [20, 21, 22]  # 20 unused in this extract but harmless
+  LABFORCE:
+    in_labor_force: 2         # 0 = NIU, 1 = not in labor force, 2 = in LF
+  EDUC:
+    bachelors_or_higher: 111  # >= 111 covers BA(111), MA(123), Prof(124), PhD(125)
+  INCWAGE:
+    missing: [99999998, 99999999]  # exclude these before any wage stat
+  UHRSWORKT:
+    full_time_min: 35         # >= 35 usual hrs = full-time; special codes 997/999 excluded

@@ -22,12 +22,14 @@ if len(os.listdir(data_dir)) <= 0:
     extract = MicrodataExtract(
         collection='cps',
         samples=['cps2024_03s','cps2019_03s'], 
-        variables=['AGE','SEX','EDUC','EMPSTAT','LABFORCE', 'OCC','IND','INCWAGE','ASECWT']
+        # variables=['AGE','SEX','EDUC','EMPSTAT','LABFORCE', 'OCC','IND','INCWAGE','ASECWT']
+        variables=['AGE','SEX','EDUC','EMPSTAT','LABFORCE', 'OCC','IND','INCWAGE','UHRSWORKT','ASECWT'],
+
     )
     ipums.submit_extract(extract)                           # Submit the extract request
     print(f"Extract submitted with id {extract.extract_id}")
 
     ipums.wait_for_extract(extract)                         # Wait for the extract to finish
 
-    ipums.download_extract(extract, download_dir='data/')   # Download the extract
+    ipums.download_extract(extract, download_dir=data_dir)   # Download the extract
     print(f"Extract downloaded to {data_dir}")
